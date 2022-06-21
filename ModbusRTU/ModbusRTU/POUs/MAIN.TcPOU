@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <POU Name="MAIN" Id="{9d1720bc-293c-4478-8bb2-8e8715536a25}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	MbMaster: ModbusRtuMaster_PcCOM;
+	
+	MB_ID: BYTE;
+	MB_Quantity: WORD;
+	MB_Address: WORD;
+	aReadRegister : ARRAY[1..10] OF WORD;
+	
+	bReadRegister: BOOL;
+	bWriteRegister: BOOL;
+	aWriteRegister : ARRAY[1..10] OF WORD;
+	
+	tTimeOut : TIME := T#2S;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* Version history: 
+Date          | Version    | created under        | Author          | Remark 
+---------------------------------------------------------------------------------------- 
+18/06/2022    | 1.0.0      | V3.1 (Build 4024.29) | Gokul G         | first release 
+	* Basic Modbus RTU Register Read/Write 
+	
+*) 
+
+(* Serial Communication  
+1.First Install TF6255 Software in both Target & Enginnering PC Add Tc2_ModbusRTU Library 
+2.In Main Program
+	Depending upon the type of Hardware used mbmaster type can change
+
+	Variable
+	MbMaster: ModbusRtuMaster_PcCOM;
+	MB_ID: BYTE;
+	MB_Quantity: WORD;
+	MB_Address: WORD;
+	aReadRegister : ARRAY[1..10] OF INT;
+	bReadRegister: BOOL;
+	bWriteRegister: BOOL;
+	aWriteRegister : ARRAY[1..10] OF INT;
+	tTimeOut : TIME := T#2S;
+
+	(* Read Register *)
+	MbMaster.ReadRegs(
+	UnitID:= MB_ID, 
+	Quantity:= MB_Quantity, 
+	MBAddr:=MB_Address , 
+	cbLength:= SIZEOF(aReadRegister), 
+	pMemoryAddr:= ADR(aReadRegister), 
+	Execute:=bReadRegister , 
+	Timeout:= tTimeOut, 
+	BUSY=> , 
+	Error=> , 
+	ErrorId=> , 
+	cbRead=> );
+
+	(* Write Register *)	
+	MbMaster.WriteRegs(
+	UnitID:= MB_ID, 
+	Quantity:= MB_Quantity, 
+	MBAddr:=MB_Address , 
+	cbLength:= SIZEOF(aWriteRegister), 
+	pMemoryAddr:= ADR(aWriteRegister), 
+	Execute:=bWriteRegister , 
+	Timeout:= tTimeOut, 
+	BUSY=> , 
+	Error=> , 
+	ErrorId=> , 
+	cbRead=> );
+					  
+8.Com Port Mode setting for pc, make sure receiver & Device manager com setting are same as setting in twincat
+9.After programming as per requirement build the solution 
+10.Link I/O Variable to Hardware after building the solution
+11.Go to com device click on input, select data1 to 64 Right click change multilink & link,Similar to output also
+12.Go to Instance, Task Inputs servStatus to com input device, similar for output
+13.Also add serStatus & SerCtrl 
+14.Then in Main enable bRead/Write Register for Read & Write Register 
+
+Note :
+	If Address in Modscan is 100 then in MBAdd the address should be 99 (-1)
+
+*)
+
+(* Read Register *)
+MbMaster.ReadRegs(
+	UnitID:= MB_ID, 
+	Quantity:= 5, 
+	MBAddr:=99 , 
+	cbLength:= SIZEOF(aReadRegister), 
+	pMemoryAddr:= ADR(aReadRegister), 
+	Execute:=bReadRegister , 
+	Timeout:= tTimeOut, 
+	BUSY=> , 
+	Error=> , 
+	ErrorId=> , 
+	cbRead=> );
+
+(* Write Register *)	
+MbMaster.WriteRegs(
+	UnitID:= MB_ID, 
+	Quantity:= 5, 
+	MBAddr:=104, 
+	cbLength:= SIZEOF(aWriteRegister), 
+	pMemoryAddr:= ADR(aWriteRegister), 
+	Execute:=bWriteRegister , 
+	Timeout:= tTimeOut, 
+	BUSY=> , 
+	Error=> , 
+	ErrorId=> , 
+	cbRead=> );]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="70" Count="9" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="123" Count="1" />
+      <LineId Id="169" Count="0" />
+      <LineId Id="171" Count="3" />
+      <LineId Id="176" Count="2" />
+      <LineId Id="180" Count="0" />
+      <LineId Id="207" Count="0" />
+      <LineId Id="136" Count="0" />
+      <LineId Id="181" Count="25" />
+      <LineId Id="157" Count="1" />
+      <LineId Id="209" Count="1" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="213" Count="1" />
+      <LineId Id="212" Count="0" />
+      <LineId Id="235" Count="0" />
+      <LineId Id="234" Count="0" />
+      <LineId Id="236" Count="0" />
+      <LineId Id="166" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="167" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="7" Count="10" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="56" Count="3" />
+      <LineId Id="38" Count="5" />
+      <LineId Id="32" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
